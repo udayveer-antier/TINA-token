@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./DividendPayingTokenBNB.sol";
-import "./IterableMapping.sol";
+import "./libs/IterableMapping.sol";
 
 contract DividendTrackerBNB is DividendPayingTokenBNB {
     using SafeMath for uint256;

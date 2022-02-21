@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./DividendPayingToken.sol";
-import "./IterableMapping.sol";
+import "./libs/IterableMapping.sol";
 
 contract DividendTracker1 is DividendPayingToken {
     using SafeMath for uint256;
