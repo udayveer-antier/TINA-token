@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.10+commit.fc410830"
+		"version": "0.8.7+commit.e28d00a7"
 	},
 	"language": "Solidity",
 	"output": {
@@ -20,6 +20,21 @@
 					{
 						"internalType": "address",
 						"name": "_btcb",
+						"type": "address"
+					},
+					{
+						"internalType": "contract DividendTrackerBNB",
+						"name": "_forBNB",
+						"type": "address"
+					},
+					{
+						"internalType": "contract DividendTracker1",
+						"name": "_forBTCB",
+						"type": "address"
+					},
+					{
+						"internalType": "contract DividendTracker1",
+						"name": "_forBETH",
 						"type": "address"
 					}
 				],
@@ -257,19 +272,6 @@
 				"name": "burn",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "burnAddress",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -546,6 +548,19 @@
 				"name": "excludeFromFee",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "gasForProcessing",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -1315,6 +1330,19 @@
 				"inputs": [
 					{
 						"internalType": "uint256",
+						"name": "gas",
+						"type": "uint256"
+					}
+				],
+				"name": "setGasForProcessing",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
 						"name": "_tax",
 						"type": "uint256"
 					}
@@ -1380,7 +1408,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "recipient",
+						"name": "to",
 						"type": "address"
 					},
 					{
@@ -1404,12 +1432,12 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "sender",
+						"name": "from",
 						"type": "address"
 					},
 					{
 						"internalType": "address",
-						"name": "recipient",
+						"name": "to",
 						"type": "address"
 					},
 					{
@@ -1676,7 +1704,7 @@
 					"details": "See {IERC20-allowance}."
 				},
 				"approve(address,uint256)": {
-					"details": "See {IERC20-approve}. Requirements: - `spender` cannot be the zero address."
+					"details": "See {IERC20-approve}. NOTE: If `amount` is the maximum `uint256`, the allowance is not updated on `transferFrom`. This is semantically equivalent to an infinite approval. Requirements: - `spender` cannot be the zero address."
 				},
 				"balanceOf(address)": {
 					"details": "See {IERC20-balanceOf}."
@@ -1712,10 +1740,10 @@
 					"details": "See {IERC20-totalSupply}."
 				},
 				"transfer(address,uint256)": {
-					"details": "See {IERC20-transfer}. Requirements: - `recipient` cannot be the zero address. - the caller must have a balance of at least `amount`."
+					"details": "See {IERC20-transfer}. Requirements: - `to` cannot be the zero address. - the caller must have a balance of at least `amount`."
 				},
 				"transferFrom(address,address,uint256)": {
-					"details": "See {IERC20-transferFrom}. Emits an {Approval} event indicating the updated allowance. This is not required by the EIP. See the note at the beginning of {ERC20}. Requirements: - `sender` and `recipient` cannot be the zero address. - `sender` must have a balance of at least `amount`. - the caller must have allowance for ``sender``'s tokens of at least `amount`."
+					"details": "See {IERC20-transferFrom}. Emits an {Approval} event indicating the updated allowance. This is not required by the EIP. See the note at the beginning of {ERC20}. NOTE: Does not update the allowance if the current allowance is the maximum `uint256`. Requirements: - `from` and `to` cannot be the zero address. - `from` must have a balance of at least `amount`. - the caller must have allowance for ``from``'s tokens of at least `amount`."
 				},
 				"transferOwnership(address)": {
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
@@ -1759,67 +1787,67 @@
 	},
 	"sources": {
 		"@openzeppelin/contracts/access/Ownable.sol": {
-			"keccak256": "0x6bb804a310218875e89d12c053e94a13a4607cdf7cc2052f3e52bd32a0dc50a1",
+			"keccak256": "0x24e0364e503a9bbde94c715d26573a76f14cd2a202d45f96f52134ab806b67b9",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b2ebbbe6d0011175bd9e7268b83de3f9c2f9d8d4cbfbaef12aff977d7d727163",
-				"dweb:/ipfs/Qmd5c7Vxtis9wzkDNhxwc6A2QT5H9xn9kfjhx7qx44vpro"
+				"bzz-raw://e12cbaa7378fd9b62280e4e1d164bedcb4399ce238f5f98fc0eefb7e50577981",
+				"dweb:/ipfs/QmXRoFGUgfsaRkoPT5bxNMtSayKTQ8GZATLPXf69HcRA51"
 			]
 		},
 		"@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-			"keccak256": "0xb03df8481a954604ad0c9125680893b2e3f7ff770fe470e38b89ac61b84e8072",
+			"keccak256": "0xdadd41acb749920eccf40aeaa8d291adf9751399a7343561bad13e7a8d99be0b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b34655953d18ba3a45b762fb6bdbb6549af69a27435e10ece178742bf70baf45",
-				"dweb:/ipfs/QmcqjUoFLLMyx7dbwSHUnDBH6aphkVHXWQvQRRev5EAWEh"
+				"bzz-raw://12af4ac016f9fdf3be5d15824f4292272aa11f6b2e0192a0f7320f5ad49bbbf0",
+				"dweb:/ipfs/QmRXMpdqCgA3TYuYxBodqs5p9jGbnMW6xa2gvjppvq4TWk"
 			]
 		},
 		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-			"keccak256": "0x027b891937d20ccf213fdb9c31531574256de774bda99d3a70ecef6e1913ed2a",
+			"keccak256": "0xbbc8ac883ac3c0078ce5ad3e288fbb3ffcc8a30c3a98c0fda0114d64fc44fca2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://087318b21c528119f649899f5b5580566dd8d7b0303d4904bd0e8580c3545f14",
-				"dweb:/ipfs/Qmbn5Mj7aUn8hJuQ8VrQjjEXRsXyJKykgnjR9p4C3nfLtL"
+				"bzz-raw://87a7a5d2f6f63f84598af02b8c50ca2df2631cb8ba2453e8d95fcb17e4be9824",
+				"dweb:/ipfs/QmR76hqtAcRqoFj33tmNjcWTLrgNsAaakYwnKZ8zoJtKei"
 			]
 		},
 		"@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol": {
-			"keccak256": "0xf98cb1651a90d20ef77d8c1dd10d5fce4954e747603e5672a8292bd4368120dd",
+			"keccak256": "0x0d19410453cda55960a818e02bd7c18952a5c8fe7a3036e81f0d599f34487a7b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://76b539a8edd558b010d1ff3e462c5d4edd039b790b91f31a5bce18957655cc9f",
-				"dweb:/ipfs/QmSdJehhx1SwCWLSFFgHQTmUY2YwDTBQjTVjkmhXhA1srb"
+				"bzz-raw://4c0f62d3d5bef22b5ca00cc3903e7de6152cb68d2d22401a463f373cda54c00f",
+				"dweb:/ipfs/QmSfzjZux7LC7NW2f7rjCXTHeFMUCWERqDkhpCTBy7kxTe"
 			]
 		},
 		"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-			"keccak256": "0x83fe24f5c04a56091e50f4a345ff504c8bff658a76d4c43b16878c8f940c53b2",
+			"keccak256": "0x8de418a5503946cabe331f35fe242d3201a73f67f77aaeb7110acb1f30423aca",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d4c3df1a7ca104b633a7d81c6c6f5192367d150cd5a32cba81f7f27012729013",
-				"dweb:/ipfs/QmSim72e3ZVsfgZt8UceCvbiSuMRHR6WDsiamqNzZahGSY"
+				"bzz-raw://5a376d3dda2cb70536c0a45c208b29b34ac560c4cb4f513a42079f96ba47d2dd",
+				"dweb:/ipfs/QmZQg6gn1sUpM8wHzwNvSnihumUCAhxD119MpXeKp8B9s8"
 			]
 		},
 		"@openzeppelin/contracts/utils/Address.sol": {
-			"keccak256": "0x3336baae5cf23e94274d75336e2d412193be508504aee185e61dc7d58cd05c8a",
+			"keccak256": "0x2ccf9d2313a313d41a791505f2b5abfdc62191b5d4334f7f7a82691c088a1c87",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://39a05eec7083dfa0cc7e0cbfe6cd1bd085a340af1ede93fdff3ad047c5fb3d8e",
-				"dweb:/ipfs/QmVApz5fCUq2QC8gKTsNNdCmcedJ3ETHp68zR5N3WUKS4r"
+				"bzz-raw://b3a57d0854b2fdce6ebff933a48dca2445643d1eccfc27f00292e937f26c6a58",
+				"dweb:/ipfs/QmW45rZooS9TqR4YXUbjRbtf2Bpb5ouSarBvfW1LdGprvV"
 			]
 		},
 		"@openzeppelin/contracts/utils/Context.sol": {
-			"keccak256": "0x90565a39ae45c80f0468dc96c7b20d0afc3055f344c8203a0c9258239f350b9f",
+			"keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://26e8b38a7ac8e7b4463af00cf7fff1bf48ae9875765bf4f7751e100124d0bc8c",
-				"dweb:/ipfs/QmWcsmkVr24xmmjfnBQZoemFniXjj3vwT78Cz6uqZW1Hux"
+				"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
 			]
 		},
 		"@openzeppelin/contracts/utils/math/SafeMath.sol": {
-			"keccak256": "0x8666f020bd8fc9dc14f07e2ebc52b5f236ab4cdde7c77679b08cb2f94730043b",
+			"keccak256": "0xa2f576be637946f767aa56601c26d717f48a0aff44f82e46f13807eea1009a21",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://163776cbf565c722232393aa2d62cbe8a2ffb5805986abf4906c00e1e07450a6",
-				"dweb:/ipfs/QmPZoN9T3cb6o8bGhjBPZcz7im8T8DWhpr3tjLwhJJHx9N"
+				"bzz-raw://973868f808e88e21a1a0a01d4839314515ee337ad096286c88e41b74dcc11fc2",
+				"dweb:/ipfs/QmfYuZxRfx2J2xdk4EXN7jKg4bUYEMTaYk9BAw9Bqn4o2Y"
 			]
 		},
 		"@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol": {
@@ -1851,22 +1879,45 @@
 			]
 		},
 		"Tina token/DividendPayingToken.sol": {
-			"keccak256": "0xdbdbef228a46d51244314f2ae089733152dec700ea4e560d527637e8ee8cd7d7",
+			"keccak256": "0x2699cdfd15f5489d588e82f63f3bca9bfe30cdf5a5ee39daf673af89924f8b89",
 			"license": "Unlicensed",
 			"urls": [
-				"bzz-raw://1d4e0b21acb62830a9eae27557080396723a27a107ecf5c0b4f625edc450e4cc",
-				"dweb:/ipfs/QmYmcy368soa5a6fXG323MfGrq2UB6RuQDd6ok1nxYeGkE"
+				"bzz-raw://0d900335625f7ffbe58a43e5d8d357bf4783f764f56c85cea425408bc35e3006",
+				"dweb:/ipfs/QmeXZx9VqQza62N1vkanoLukk9bYmUXfebigcqHRZiBciM"
 			]
 		},
 		"Tina token/DividendPayingTokenBNB.sol": {
-			"keccak256": "0xe9543c2dc994335a4e78ae73dd4ec70e452da903db3cf287bd26445027ac48b5",
+			"keccak256": "0x81ae59bf68ec26804159183f1f890483c6fdfae03805710ddaef29189df4a009",
 			"license": "Unlicensed",
 			"urls": [
-				"bzz-raw://cab0cf79595a793429ce3b7e7dd641ca18011824b5bfb480ff55dc506b89c135",
-				"dweb:/ipfs/QmbgPzoZYUz7z79uGruPcqkYETyJ1jXhPDTdCamcJqYeCH"
+				"bzz-raw://0babcaf10f106560932a94c5f443a5522664a1714148c4bbee34a9069f5942bb",
+				"dweb:/ipfs/QmUugUCnyWYhrLXziz2MHF1ZA3GHtBrk6HTyPZ9C5x6siK"
 			]
 		},
-		"Tina token/DividendPayingTokenInterface.sol": {
+		"Tina token/DividendTracker1.sol": {
+			"keccak256": "0x5dc57acdb6134ef78ad33c28d31b9de393f3bb34b9eb3e2e25e2be45e3f06877",
+			"license": "Unlicensed",
+			"urls": [
+				"bzz-raw://3dd8bcc419738c0fae49d7abb15fc831f892ce784ae11fbfb6f7b610377ac008",
+				"dweb:/ipfs/QmP6nPVJD5q6MVT1yvqqz9VvgfM5BEox9cRafL2Btysyp4"
+			]
+		},
+		"Tina token/DividendTracker2.sol": {
+			"keccak256": "0xa82f7ca26fee4cf1e8a011d4194eaa42585a6af055f21d7c98f1e66b59f2fc36",
+			"license": "Unlicensed",
+			"urls": [
+				"bzz-raw://6f6a86b3be583b8952d0bc7d7da9483af3a8b97d410eeeb18175035d0d359742",
+				"dweb:/ipfs/QmWQwvk87SuvFPAfjLeJHaapPXi5pahXjeW4t5yr6Q9Xae"
+			]
+		},
+		"Tina token/TINA.sol": {
+			"keccak256": "0x47dcc64001df74c1cfa660b486091013e2974b7ef3c078faffe8cc88e059e95e",
+			"urls": [
+				"bzz-raw://e1c23ac0bda44dec2af4ba8c6e43e9ff57114e140ee34dacdc368c5fef44f76e",
+				"dweb:/ipfs/QmVV8g9VJVFp7F8rySxWaUaTZTjRBszE26kcJ4o6MJ8EMz"
+			]
+		},
+		"Tina token/interfaces/DividendPayingTokenInterface.sol": {
 			"keccak256": "0x5f0bb698e12f88b989b9f0c9abb661e23e1ad40e5396da9d903fbd1fddeb592a",
 			"license": "Unlicensed",
 			"urls": [
@@ -1874,7 +1925,7 @@
 				"dweb:/ipfs/QmcWTupCensVS471sMFUpvwbYbMzpLmnnDyMiDseQfSSat"
 			]
 		},
-		"Tina token/DividendPayingTokenOptionalInterface.sol": {
+		"Tina token/interfaces/DividendPayingTokenOptionalInterface.sol": {
 			"keccak256": "0xa6682cd10ccb23bd4758a919865a84486012d94b43d5b51c00f88a817cbb12fc",
 			"license": "Unlicensed",
 			"urls": [
@@ -1882,23 +1933,7 @@
 				"dweb:/ipfs/QmY2Ps6qqYpSfjcYozL8RB7MgQCg1zi5fwFJjgGpndZBLC"
 			]
 		},
-		"Tina token/DividendTracker1.sol": {
-			"keccak256": "0xb7d5b7f0e8a2505c2669ec7945813c9a4ad4a8503d6e62a21a48960963dd3b84",
-			"license": "Unlicensed",
-			"urls": [
-				"bzz-raw://60eeaf20b15b6aa94ce31d44e082c2b0cc9eebc2c336a0fed0a4848479afd1f2",
-				"dweb:/ipfs/QmYWKBQZoikPwyBjyfMrnz9gxToxHiGJb5srzqRa7zUcNJ"
-			]
-		},
-		"Tina token/DividendTracker2.sol": {
-			"keccak256": "0x68f2f2e965263bc354b937183ab1ca5323e4c0a8b3c7043ce7a76d35b164520d",
-			"license": "Unlicensed",
-			"urls": [
-				"bzz-raw://d268ada9264cf6401d007f3c9c8b0380694c89d24cb71ddd685103dc6f9d63e7",
-				"dweb:/ipfs/QmbzWHcS2ggzdptcodrmKBomvEicxDi4C4kUbAMPKhywPq"
-			]
-		},
-		"Tina token/IterableMapping.sol": {
+		"Tina token/libs/IterableMapping.sol": {
 			"keccak256": "0xc2e94640b26d80f0035bb23221d6585d970330f3815b4288e4423fd2e640eca5",
 			"license": "Unlicensed",
 			"urls": [
@@ -1906,14 +1941,7 @@
 				"dweb:/ipfs/QmdHLJkR843ad56VzUAYkyzN5Copr2HiurvzPaW25jt8GJ"
 			]
 		},
-		"Tina token/TINA.sol": {
-			"keccak256": "0x86bc7465f0df16a78cbce8bef1e6ea7e722d3e70608bce2f05ec1cfb5c1dccbd",
-			"urls": [
-				"bzz-raw://020416f8840bb04400138b803431a9b3cd4eee1ac2df728a32b245cda20d4d46",
-				"dweb:/ipfs/QmQmABdgrBvxXD8hnwPQay2p9tNqFQRJCEWyzXanUw2GuB"
-			]
-		},
-		"Tina token/safeMathInt.sol": {
+		"Tina token/libs/safeMathInt.sol": {
 			"keccak256": "0xfda2ee9b366daa2051c782fe91f5dd0fb10baeab71fe8fe6b718d727c58d02cd",
 			"license": "Unlicensed",
 			"urls": [
@@ -1921,7 +1949,7 @@
 				"dweb:/ipfs/QmTa6KjQwyXumdrNMe4EfGCwf7TfP7PphMJDr1L764vZeU"
 			]
 		},
-		"Tina token/safeMathUint.sol": {
+		"Tina token/libs/safeMathUint.sol": {
 			"keccak256": "0x5e379c7f4c1ca80d269dd7580d504ab677c98c0f9677b262b5897fea8e656d6c",
 			"license": "Unlicensed",
 			"urls": [

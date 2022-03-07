@@ -24,7 +24,6 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
     
     address public marketingAddress;
     address public devAddress;
-    address public burnAddress = 0x000000000000000000000000000000000000dEaD;
     
     IUniswapV2Router02 public immutable uniswapV2Router;
     address public immutable uniswapV2Pair;
@@ -53,17 +52,19 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
     
     uint256 public maxTxAmount;
     uint256 public maxBalance;
+
+    uint256 public gasForProcessing = 300000;
     
     mapping (address => bool) public _isExcludedFromFee;
     
-     constructor (IUniswapV2Router02 _router, address _beth, address _btcb) ERC20("TINA Token","TINA") {
+    constructor (IUniswapV2Router02 _router, address _beth, address _btcb, DividendTrackerBNB _forBNB, DividendTracker1 _forBTCB, DividendTracker1 _forBETH) ERC20("TINA Token","TINA") {
         
         BTCB = _btcb;
         BETH = _beth;
         
-        dividendTracker = new DividendTrackerBNB(); // BNB
-        dividendTrackerBETH = new DividendTracker1(); // BETH
-        dividendTrackerBTCB = new DividendTracker1(); // BTC
+        dividendTracker = _forBNB; // BNB
+        dividendTrackerBETH = _forBETH; // BETH
+        dividendTrackerBTCB = _forBTCB; // BTC
         
         _mint(msg.sender, totalSupply());
         maxTxAmount = totalSupply().mul(5).div(1000);
@@ -99,7 +100,7 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
     
     function getTransferAmounts(uint256 _amount) private returns (uint256, uint256) {
         uint256 liquidityTaxAmount = _amount.mul(liquidityTax).div(1000);
-        uint256 dividendTaxAmount = _amount.mul(dividendTax).div(1000)
+        uint256 dividendTaxAmount = _amount.mul(dividendTax).div(1000);
         forLiquidity = forLiquidity.add(liquidityTaxAmount);
         forDividends = forDividends.add(dividendTaxAmount);
         forBTCB = forBTCB.add(forDividends.mul(BTCBdivisor).div(100));
@@ -160,11 +161,28 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
             super._transfer(from, address(this), fees);
             super._transfer(from, marketingAddress, marketingAmount);
             super._transfer(from, devAddress, devAmount);
-            super._transfer(from, burnAddress, burnAmount);
+            super._burn(from, burnAmount);
         }
 
         super._transfer(from, to, amount);
         
+        try dividendTracker.setBalance(payable(from), balanceOf(from)) {} catch {}
+        try dividendTracker.setBalance(payable(to), balanceOf(to)) {} catch {}
+
+        try dividendTrackerBETH.setBalance(payable(from), balanceOf(from)) {} catch {}
+        try dividendTrackerBETH.setBalance(payable(to), balanceOf(to)) {} catch {}
+
+        try dividendTrackerBTCB.setBalance(payable(from), balanceOf(from)) {} catch {}
+        try dividendTrackerBTCB.setBalance(payable(to), balanceOf(to)) {} catch {}
+
+        if (!swapping) {
+            uint256 gas = gasForProcessing.div(3);
+
+            try dividendTracker.process(gas) {} catch {}
+            try dividendTrackerBETH.process(gas) {} catch {}
+            try dividendTrackerBTCB.process(gas) {} catch {}
+        }
+
         require(balanceOf(to) <= maxBalance,"TINA: Balance exceed max balance");
         
     }
@@ -285,6 +303,9 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
         return amount[1];
     }
     
+    function withdrawStuckToken(address _token, uint amount) external onlyOwner {
+        IERC20(_token).transfer(msg.sender, amount);
+    }
     
     
     // -------Exclude dividends ----------
@@ -528,6 +549,9 @@ contract TINA is Context, ERC20, ERC20Burnable , Ownable {
     //     emit ProcessedDividendTracker(iterations, claims, lastProcessedIndex, false, gas, tx.origin);
     // }
 
+    function setGasForProcessing(uint256 gas) external {
+        gasForProcessing = gas;
+    }
     
     // --------- claim --------
     function claim() external {
